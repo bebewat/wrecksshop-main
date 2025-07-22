@@ -1,0 +1,7 @@
+pyinstaller --noconfirm --clean \
+  --name WrecksShop \
+  --add-data "data/CleanArkData.csv;data" \
+  arkshopbot_launcher.py
+```
+
+
