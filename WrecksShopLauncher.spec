@@ -11,14 +11,14 @@ Path to PyInstaller package for loader modules
 pyi_loader_dir = os.path.join(os.path.dirname(PyInstaller.file), 'loader')
 
 a = Analysis(
-['wrecksshop_launcher_gui_full.py'],
+['wrecksshop_launcher_gui.py'],
 pathex=[Path(file).parent.resolve().as_posix()],
 binaries=[],
 datas=[
 # Include entire PyInstaller loader directory
 (pyi_loader_dir, 'PyInstaller/loader'),
 ('data/CleanArkData.csv', 'data'),
-('assets/icon.ico', 'assets')
+('assets/logo.ico', 'assets')
 ],
 hiddenimports=['ipaddress'],
 hookspath=[],
