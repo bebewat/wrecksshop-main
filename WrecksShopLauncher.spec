@@ -15,7 +15,7 @@ pyinstaller_submodules = collect_submodules('PyInstaller')
 
 a = Analysis(
 ['wrecksshop_launcher_gui.py'],
-pathex=[Path(file).parent.resolve().as_posix()],
+pathex=[Path(__file__).parent.resolve().as_posix()],
 binaries=[],
 datas=[
 # Include entire PyInstaller loader directory
