@@ -9,8 +9,11 @@ if not BASE_CSV_PATH.is_file():
 
 # Load the base Ark data library as a dict of sections -> [ArkItem]
 def update_base_library():
-    """Reloads and returns the base Ark data library from CSV."""
-    return load_ark_lib(BASE_CSV_PATH)
+    raw = load_ark_lib(BASE_CSV_PATH)  # likely a dict of section -> [ArkItem]
+    grouped = {}
+    for section, items in raw.items():
+        grouped[section] = {item.name: item for item in items}
+    return grouped
 
 # Load mod JSON files and merge their entries onto the base library
 def update_full_library(mods_path: Path):
