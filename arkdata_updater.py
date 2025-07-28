@@ -1,42 +1,35 @@
-# arkdata_updater.py
-
-import os
-import subprocess
 import json
 from pathlib import Path
+from arklib_loader import load_ark_lib, ArkItem
 
-ARKDATA_REPO = Path(__file__).parent / "arkdata"
-REMOTE_URL = "https://github.com/jonxmitchell/arkdata.git"
+# Path to base CSV data (should match GUI lookup logic)
+BASE_CSV_PATH = Path(__file__).parent / 'data' / 'CleanArkData.csv'
+if not BASE_CSV_PATH.is_file():
+    BASE_CSV_PATH = Path(__file__).parent / 'CleanArkData.csv'
 
-def ensure_repo():
-    """Clone once or pull latest if already present."""
-    if not ARKDATA_REPO.exists():
-        subprocess.run(
-            ["git", "clone", REMOTE_URL, str(ARKDATA_REPO)],
-            check=True
-        )
-    else:
-        subprocess.run(
-            ["git", "-C", str(ARKDATA_REPO), "pull"],
-            check=True
-        )
-
-def load_json(filename: str):
-    path = ARKDATA_REPO / filename
-    with open(path, "r", encoding="utf-8") as f:
-        return json.load(f)
-
+# Load the base library from CSV
 def update_base_library():
-    """
-    Pull latest ArkData and return a dict with 'dinos' and 'items'.
-    """
-    ensure_repo()
-    dinos = load_json("DinoNames.json")      # adjust filename if different
-    items = load_json("ItemList.json")       # adjust filename if different
+    """Reloads and returns the base Ark data library from CSV."""
+    return load_ark_lib(BASE_CSV_PATH)
 
-    # Normalize into your own structure:
-    base_lib = {
-        "dinos": { entry["name"]: entry for entry in dinos },
-        "items": { entry["internalName"]: entry for entry in items },
-    }
-    return base_lib
+# Load mod JSON files and merge with base
+def update_full_library(mods_path: Path):
+    """
+    Scans JSON files in mods_path for mods and merges their entries with the base library.
+    Expects JSON files containing lists of entries with 'name' or 'internalName'.
+    """
+    base = update_base_library()
+    mod_lib = {"dinos": {}, "items": {}}
+    mods_dir = Path(mods_path)
+    if not mods_dir.is_dir():
+        return base
+    for json_file in mods_dir.glob('*.json'):
+        data = json.load(json_file.open('r', encoding='utf-8'))
+        key = 'dinos' if 'Dino' in json_file.name else 'items'
+        for entry in data:
+            identifier = entry.get('name') or entry.get('internalName')
+            mod_lib[key][identifier] = entry
+    # Merge mod entries onto base
+    base.get('dinos', {}).update(mod_lib['dinos'])
+    base.get('items', {}).update(mod_lib['items'])
+    return base
