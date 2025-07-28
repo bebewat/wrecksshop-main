@@ -371,10 +371,20 @@ class WrecksShopLauncher(tk.Tk):
             self.lib_combo.current(0); self._on_type_select()
 
     def _on_type_select(self):
-        sec=self.lib_type_var.get(); self.lib_tv.delete(*self.lib_tv.get_children())
-        for name,entry in self.library.get(sec,{}).items():
-            bp=entry.get('blueprint',''); mod=entry.get('mod','');
-            self.lib_tv.insert('', 'end', values=(name,bp,mod))
+        section = self.lib_type_var.get()
+        self.lib_tv.delete(*self.lib_tv.get_children())
+
+        entries = self.library.get(section, [])
+        # If it’s a dict (new-style), items() works. If it’s a list, convert to (name, item).
+        if isinstance(entries, dict):
+            iterable = entries.items()
+        else:
+            iterable = [(item.name, item) for item in entries]
+
+        for name, entry in iterable:
+            bp  = getattr(entry, 'blueprint', '') or entry.get('blueprint','')
+            mod = getattr(entry, 'mod', '') or entry.get('mod','')
+            self.lib_tv.insert('', 'end', values=(name, bp, mod))
 
     def _on_lib_import(self):
         sel=self.lib_tv.selection();
