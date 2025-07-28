@@ -20,7 +20,7 @@ binaries=[],
 datas=[
 (pyi_loader_dir, 'PyInstaller/loader'),
 ('data/CleanArkData.csv', 'data'),
-('*/logo.ico', 'assets'),
+('/logo.ico', 'assets'),
 ],
 hiddenimports=['ipaddress'] + pyinstaller_submodules,
 hookspath=[],
