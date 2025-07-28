@@ -13,9 +13,14 @@ pyi_loader_dir = os.path.join(pyi_pkg_path, 'loader')
 
 pyinstaller_submodules = collect_submodules('PyInstaller')
 
-from PyInstaller.utils.hooks import Tree, collect_submodules
-
-loader_tree = Tree(pyi_loader_dire, prefix='PyInstaller/loader')
+datas = [
+('data/CleanArkData.csv', 'data'),
+('assets/icon.ico', 'assets'),
+]
+for fname in os.listdir(pyi_loader_dir):
+src = os.path.join(pyi_loader_dir, fname)
+if os.path.isfile(src):
+datas.append((src, os.path.join('PyInstaller', 'loader')))
 
 a = Analysis(
 ['wrecksshop_launcher_gui_full.py'],
