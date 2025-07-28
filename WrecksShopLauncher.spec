@@ -23,14 +23,10 @@ if os.path.isfile(src):
   datas.append((src, os.path.join('PyInstaller', 'loader')))
 
 a = Analysis(
-['wrecksshop_launcher_gui_full.py'],
+['wrecksshop_launcher_gui.py'],
 pathex=[os.getcwd()],
 binaries=[],
-datas=[
-loader_tree,
-('data/CleanArkData.csv', 'data'),
-('assets/icon.ico', 'assets'),
-],
+datas=datas,
 hiddenimports=['ipaddress'] + pyinstaller_submodules,
 hookspath=[],
 runtime_hooks=[],
