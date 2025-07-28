@@ -8,7 +8,7 @@ import PyInstaller
 
 block_cipher = None
 
-pyi_pkg_path = os.path.dirname(PyInstaller.file)
+pyi_pkg_path = os.path.dirname(PyInstaller.__file__)
 pyi_loader_dir = os.path.join(pyi_pkg_path, 'loader')
 
 pyinstaller_submodules = collect_submodules('PyInstaller')
