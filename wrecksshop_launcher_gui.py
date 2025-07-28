@@ -17,8 +17,8 @@ SHOP_ITEMS_PATH = 'shop_items.json'
 ADMIN_ROLES_PATH = 'admin_roles.json'
 DISCOUNTS_PATH = 'discounts.json'
 ASSETS_DIR = 'assets'
-LOGO_PATH = os.path.join(ASSETS_DIR, 'logo.png')
-ICON_PATH = os.path.join(ASSETS_DIR, 'icon.png')
+LOGO_PATH = os.path.join(ASSETS_DIR, 'logo_icon.ico')
+ICON_PATH = os.path.join(ASSETS_DIR, 'logo_icon.ico')
 # CSV data library path (robust lookup)
 base_dir = Path(__file__).parent
 csv_path = base_dir / 'data' / 'CleanArkData.csv'
@@ -151,9 +151,9 @@ class WrecksShopLauncher(tk.Tk):
         elif label == 'LOGS':
             self._show_tab('Logs')
         elif label == 'GITHUB':
-            import webbrowser; webbrowser.open('https://github.com')
+            import webbrowser; webbrowser.open('https://github.com/bebewat/wrecksshop-main')
         elif label == 'DISCORD':
-            import webbrowser; webbrowser.open('https://discord.gg')
+            import webbrowser; webbrowser.open('https://discord.gg/smXr7pQ37V')
 
     # Configuration Page
     def _build_config_page(self):
