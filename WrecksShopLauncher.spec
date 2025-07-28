@@ -2,6 +2,7 @@
 
 import os
 import PyInstaller
+from PyInstaller.building.build_main import Analysis, PYZ, EXE, COLLECT
 from PyInstaller.utils.hooks import collect_submodules
 from pathlib import Path
 
@@ -9,6 +10,7 @@ block_cipher = None
 
 
 pyi_loader_dir = os.path.join(os.path.dirname(PyInstaller.file), 'loader')
+pyinstaller_submodules = collect_submodules('PyInstaller')
 
 a = Analysis(
 ['wrecksshop_launcher_gui.py'],
@@ -20,7 +22,7 @@ datas=[
 ('data/CleanArkData.csv', 'data'),
 ('assets/logo.ico', 'assets')
 ],
-hiddenimports=['ipaddress'],
+hiddenimports=['ipaddress'] + pyinstaller_submodules,
 hookspath=[],
 runtime_hooks=[],
 excludes=[],
@@ -42,7 +44,7 @@ bootloader_ignore_signals=False,
 strip=False,
 upx=True,
 console=False,
-icon='assets/icon.ico'
+icon='assets/logo.ico'
 )
 
 coll = COLLECT(
