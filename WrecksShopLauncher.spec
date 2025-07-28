@@ -15,7 +15,7 @@ pyinstaller_submodules = collect_submodules('PyInstaller')
 
 datas = [
 ('data/CleanArkData.csv', 'data'),
-('assets/icon.ico', 'assets'),
+('assets/logo_icon.ico', 'assets'),
 ]
 for fname in os.listdir(pyi_loader_dir):
   src = os.path.join(pyi_loader_dir, fname)
@@ -47,7 +47,7 @@ bootloader_ignore_signals=False,
 strip=False,
 upx=True,
 console=False,
-icon='assets/icon.ico'
+icon='assets/logo_icon.ico'
 )
 
 coll = COLLECT(
