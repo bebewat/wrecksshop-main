@@ -37,6 +37,7 @@ jobs:
             --add-data "data/CleanArkData.csv;data" \
             --icon logo.ico \
             --collect-all PyInstaller \
+            --runtime-hook hook-pyimod02_importers.py \
             wrecksshop_launcher_gui.py
 
 
