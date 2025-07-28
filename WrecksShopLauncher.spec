@@ -8,8 +8,9 @@ from pathlib import Path
 
 block_cipher = None
 
+i_loader_pkg_path = os.path.dirname(PyInstaller.file)
 
-pyi_loader_dir = os.path.join(os.path.dirname(PyInstaller.loader), 'loader')
+pyi_loader_dir = os.path.join(i_loader_pkg_path, 'loader')
 pyinstaller_submodules = collect_submodules('PyInstaller')
 
 a = Analysis(
