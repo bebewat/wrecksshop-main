@@ -45,7 +45,7 @@ name='WrecksShopLauncher',
 debug=False,
 bootloader_ignore_signals=False,
 strip=False,
-upx=True,
+upx=False,
 console=False,
 icon='assets/logo_icon.ico'
 )
@@ -56,6 +56,6 @@ a.binaries,
 a.zipfiles,
 a.datas,
 strip=False,
-upx=True,
+upx=False,
 name='WrecksShopLauncher'
 )
