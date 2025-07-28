@@ -1,12 +1,12 @@
--- mode: python --
+# -*- mode: python -*-
 
 import os
 import PyInstaller
+import Pyinstaller.util.hooks import collect_submodules
 from pathlib import Path
 
 block_cipher = None
 
-Path to PyInstaller package for loader modules
 
 pyi_loader_dir = os.path.join(os.path.dirname(PyInstaller.file), 'loader')
 
