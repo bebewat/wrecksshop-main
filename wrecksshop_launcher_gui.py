@@ -8,7 +8,7 @@ from tkinter.scrolledtext import ScrolledText
 from pathlib import Path
 from PIL import Image, ImageTk
 from arklib_loader import load_ark_lib, ArkItem
-from arkdata_updater.py import update_base_library, update_full_library
+from arkdata_updater import update_base_library, update_full_library
 import command_builders
 
 # Paths and data files
