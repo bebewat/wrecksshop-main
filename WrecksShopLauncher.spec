@@ -28,7 +28,7 @@ if os.path.isfile(src):
 a = Analysis(
 ['wrecksshop_launcher_gui.py'],
 pathex=[os.getcwd()],
-binaries=[(python_ll,'.')],
+binaries=[(python_dll,'.')],
 datas=datas,
 hiddenimports=['ipaddress'] + pyinstaller_submodules,
 hookspath=[],
