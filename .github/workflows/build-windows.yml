@@ -38,7 +38,7 @@ jobs:
             --icon logo.ico \
             --hidden-import=ipaddress \
             --hidden-import=pyimod02_importers \
-            --collect-submodules PyInstaller \
+            --collect-all PyInstaller \
             wrecksshop_launcher_gui.py
 
 
