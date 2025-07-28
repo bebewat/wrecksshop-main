@@ -6,6 +6,12 @@ on:
     paths:
       - '**.py'
       - 'data/**'
+      - 'shop_items.json'
+      - 'admin_roles.json'
+      - 'discounts.json'
+      - 'wrecksshop_launcher_gui.py'
+      - 'WrecksShopLauncher.spec'
+      - 'requirements.txt'
       - '.github/workflows/build-windows.yml'
   workflow_dispatch: {}
 
@@ -13,36 +19,25 @@ jobs:
   build-windows:
     runs-on: windows-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-            python-version: '3.11'
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install Pillow==9.5.0 discord.py==2.3.2 pandas==2.1.2 python-dotenv==1.0.0 pyinstaller==5.8.0 ipaddress
-          pip install -r requirements.txt
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
 
-      - name: Build EXE with PyInstaller
-        shell: bash
-        run: |
-          pyinstaller --noconfirm --clean \
-            --onedir \
-            --windowed \
-            --name WrecksShopLauncher \
-            --add-data "data/CleanArkData.csv;data" \
-            --icon logo.ico \
-            --collect-all PyInstaller \
-            --runtime-hook hook-pyimod02_importers.py \
-            wrecksshop_launcher_gui.py
+    - name: Build EXE with PyInstaller
+      run: |
+        pyinstaller WrecksShopLauncher.spec
 
-
-      - name: Archive artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: WrecksShopLauncher
-          path: dist/*
+    - name: Archive built executable
+      uses: actions/upload-artifact@v4
+      with:
+        name: WrecksShopLauncher
+        path: dist/**/*.exe
