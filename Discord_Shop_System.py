@@ -11,6 +11,7 @@ from discord import app_commands
 from dotenv import load_dotenv
 from mcrcon import MCRcon
 from aiolimiter import AsyncLimiter
+from pathlib import Path
 import pymysql
 
 # Load environment
@@ -18,15 +19,19 @@ load_dotenv()
 
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
 SHOP_LOG_CHANNEL_ID = int(os.getenv("SHOP_LOG_CHANNEL_ID", 0))
+SHOP_CHANNEL = int(os.getenv("SHOP_CHANNEL", 0))
 REWARD_INTERVAL_MINUTES = int(os.getenv("REWARD_INTERVAL_MINUTES", 30))
 REWARD_POINTS = int(os.getenv("REWARD_POINTS", 10))
 TIP4SERV_SECRET = os.getenv("TIP4SERV_SECRET", "")
 TIP4SERV_TOKEN = os.getenv("TIP4SERV_TOKEN", "")
 
-# Parse multiple MariaDB configs from env
-# Expected JSON: [{"name":"primary","host":"...","port":3306,"user":"...","password":"...","database":"..."}, ...]
+ADMIN_ROLES_PATH = Path(__file__).parent / 'admin_roles.json'
+DISCOUNTS_PATH  = Path(__file__).parent / 'discounts.json'
 DB_CONFIGS = json.loads(os.getenv("SQL_DATABASES", "[]"))
-# Create connections
+
+admin_roles = json.loads(ADMIN_ROLES_PATH.read_text()) if ADMIN_ROLES_PATH.exists() else []
+discounts   = json.loads(DISCOUNTS_PATH.read_text())  if DISCOUNTS_PATH.exists()  else []
+
 db_conns = {}
 for cfg in DB_CONFIGS:
     db_conns[cfg["name"]] = pymysql.connect(host=cfg["host"], port=int(cfg["port"]),
@@ -232,6 +237,18 @@ class MapSelect(Select):
             log_transaction(player_id, -item['price'], "Queued", source=f"buy:{item['name']}:{map_name}")
             await interaction.response.send_message(f"📦 Queued {item['name']} for {map_name}.", ephemeral=True)
 
+def is_admin(user_id):
+    return any(r['id'] == str(user_id) for r in admin_roles)
+
+# When calculating cost:
+def apply_discounts(user_roles, base_price, current_event=None):
+    price = base_price
+    for d in discounts:
+        if d['type'] == 'role' and d['target'] in user_roles:
+            price = price * (1 - d['amount']/100)
+        if d['type'] == 'event' and d['target'] == current_event:
+            price = price * (1 - d['amount']/100)
+    return int(price)
 class MapSelectView(View):
     def __init__(self, user_id):
         super().__init__(timeout=30)
@@ -262,6 +279,8 @@ async def postshop(interaction: discord.Interaction):
     # Proceed to post the shop menu
 
     await interaction.response.send_message("🛒 Shop Menu", view=ShopView())
+    
+
 
 class RetryTip4ServButton(Button):
     retry_tracker = {}

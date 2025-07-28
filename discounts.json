@@ -1,0 +1,14 @@
+[
+  {
+    "name": "Holiday Sale",
+    "type": "event",
+    "target": "Christmas2025",
+    "amount": 20
+  },
+  {
+    "name": "Staff Discount",
+    "type": "role",
+    "target": "987654321098765432",
+    "amount": 15
+  }
+]
