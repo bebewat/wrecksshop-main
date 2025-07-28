@@ -5,6 +5,9 @@ from pathlib import Path
 from PyInstaller.building.build_main import Analysis, PYZ, EXE, COLLECT
 from PyInstaller.utils.hooks import collect_submodules
 import PyInstaller
+import sys
+
+python_dll = os.path.join(os.path.dirname(sys.executable), f'python{sys.version_info.major}{sys.version_info.minor}.dll')
 
 block_cipher = None
 
@@ -25,7 +28,7 @@ if os.path.isfile(src):
 a = Analysis(
 ['wrecksshop_launcher_gui.py'],
 pathex=[os.getcwd()],
-binaries=[],
+binaries=[(python_ll,'.')],
 datas=datas,
 hiddenimports=['ipaddress'] + pyinstaller_submodules,
 hookspath=[],
