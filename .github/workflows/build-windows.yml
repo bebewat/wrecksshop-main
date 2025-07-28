@@ -31,9 +31,13 @@ jobs:
         shell: bash
         run: |
           pyinstaller --noconfirm --clean \
+            --onefile \
+            --windowed \
             --name WrecksShop \
             --add-data "data/CleanArkData.csv;data" \
-            --icon logo_icon.ico \
+            --icon logo.ico \
+            --hidden-import=ipaddress \
+            --hidden-import=pyimod02_importers \
             wrecksshop_launcher_gui.py
 
 
