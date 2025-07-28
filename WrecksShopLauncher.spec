@@ -2,7 +2,7 @@
 
 import os
 import PyInstaller
-from PyInstaller.util.hooks import collect_submodules
+from PyInstaller.utils.hooks import collect_submodules
 from pathlib import Path
 
 block_cipher = None
