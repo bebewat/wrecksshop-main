@@ -14,7 +14,7 @@ pyi_loader_dir = os.path.join(pyi_pkg_path, 'loader')
 pyinstaller_submodules = collect_submodules('PyInstaller')
 
 a = Analysis(
-['wrecksshop_launcher_gui_full.py'],
+['wrecksshop_launcher_gui.py'],
 pathex=[os.getcwd()],  # Use working directory
 binaries=[],
 datas=[
