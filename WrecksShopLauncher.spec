@@ -18,9 +18,9 @@ datas = [
 ('assets/icon.ico', 'assets'),
 ]
 for fname in os.listdir(pyi_loader_dir):
-src = os.path.join(pyi_loader_dir, fname)
+  src = os.path.join(pyi_loader_dir, fname)
 if os.path.isfile(src):
-datas.append((src, os.path.join('PyInstaller', 'loader')))
+  datas.append((src, os.path.join('PyInstaller', 'loader')))
 
 a = Analysis(
 ['wrecksshop_launcher_gui_full.py'],
