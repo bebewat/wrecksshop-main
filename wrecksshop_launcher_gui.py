@@ -55,6 +55,7 @@ def load_modded_library(mods_path: Path):
 class WrecksShopLauncher(tk.Tk):
     def __init__(self):
         super().__init__()
+        self.categories = []
         self.title('WrecksShop Launcher')
         self.geometry('1024x768')
         self.configure(bg='#ffffff')
