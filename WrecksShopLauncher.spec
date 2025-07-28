@@ -1,16 +1,16 @@
 # -*- mode: python -*-
 
 import os
-import PyInstaller
 from PyInstaller.building.build_main import Analysis, PYZ, EXE, COLLECT
 from PyInstaller.utils.hooks import collect_submodules
 from pathlib import Path
+import PyInstaller
 
 block_cipher = None
 
-i_loader_pkg_path = os.path.dirname(PyInstaller.file)
+i_loader_pkg_path = os.path.dirname(PyInstaller.__file__)
+pyi_loader_dir    = os.path.join(i_loader_pkg_path, 'loader')
 
-pyi_loader_dir = os.path.join(i_loader_pkg_path, 'loader')
 pyinstaller_submodules = collect_submodules('PyInstaller')
 
 a = Analysis(
