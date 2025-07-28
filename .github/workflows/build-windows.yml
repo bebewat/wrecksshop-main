@@ -6,6 +6,7 @@ on:
     paths:
       - '**.py'
       - 'data/**'
+      - 'assets/**'
       - 'shop_items.json'
       - 'admin_roles.json'
       - 'discounts.json'
@@ -40,4 +41,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: WrecksShopLauncher
-        path: dist/WrecksShopLauncher/WrecksShopLauncher.exe
+        path: dist/WrecksShopLauncher/**
