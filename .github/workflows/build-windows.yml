@@ -33,7 +33,7 @@ jobs:
           pyinstaller --noconfirm --clean \
             --onedir \
             --windowed \
-            --name WrecksShop \
+            --name WrecksShopLauncher \
             --add-data "data/CleanArkData.csv;data" \
             --icon logo.ico \
             --collect-all PyInstaller \
