@@ -39,11 +39,11 @@ a.scripts,
 [],
 exclude_binaries=True,
 name='WrecksShopLauncher',
-debug=False,
+debug=True,
 bootloader_ignore_signals=False,
 strip=False,
 upx=True,
-console=False,
+console=True,
 icon='assets/logo.ico'
 )
 
