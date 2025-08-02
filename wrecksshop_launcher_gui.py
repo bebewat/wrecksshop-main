@@ -59,6 +59,7 @@ class WrecksShopLauncher(tk.Tk):
         self.title('WrecksShop Launcher')
         self.geometry('1024x768')
         self.configure(bg='#ffffff')
+        self.config_path = os.path.join(os.getcwd(), "wrecksshop_config.json")
         # Icon & header
         try:
             self.iconphoto(False, tk.PhotoImage(file=ICON_PATH))
@@ -99,11 +100,14 @@ class WrecksShopLauncher(tk.Tk):
             self.logo_img = None
 
     def load_config(self):
-        try:
-            with open(config_path, "r") as f:
+        if os.path.exists(self.config_path):
+            with open(self.config_path, 'r') as f:
                 return json.load(f)
-        except FileNotFoundError:
-            return {}
+        return {}
+        
+    def save_config(self):
+        with open(self.config_path, 'w') as f:
+            json.dump(self.config_data, f, indent=4)
 
     def _build_main_menu(self):
         c = Canvas(self, highlightthickness=0)
