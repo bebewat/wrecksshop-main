@@ -70,6 +70,7 @@ class WrecksShopLauncher(tk.Tk):
         # Build UI
         self._build_main_menu()
         self._build_notebook()
+        self._build_shop_page()
         # Load data
         self._load_env()
         self.library = update_base_library()
@@ -273,9 +274,11 @@ class WrecksShopLauncher(tk.Tk):
             self._log(f"Removed database {name}")
 
     # Shop Items Page
-    def _build_shop_page(self):
-        f = ttk.Frame(parent)
-        f.pack(fill='both', expand=True)
+def _build_shop_page(self):
+    # Create a new tab for Shop Items in the notebook
+    f = ttk.Frame(self.notebook)
+    self.notebook.add(f, text='Shop Items')
+
     # ---------------- Category Section ----------------
     ttk.Label(f, text='Category').pack(anchor='w', pady=5)
     self.cat_combo = ttk.Combobox(f, values=self.categories, state='readonly')
@@ -354,6 +357,7 @@ class WrecksShopLauncher(tk.Tk):
     btnf2.pack(pady=5)
     ttk.Button(btnf2, text='Add Item', command=self._on_add_item).pack(side='left', padx=5)
     ttk.Button(btnf2, text='Toggle Item Enabled', command=self._toggle_item_enabled).pack(side='left', padx=5)
+
 
     def _generate_command(self):
         """Generate a shop command dynamically from selected item & fields."""
