@@ -355,8 +355,8 @@ class WrecksShopLauncher(tk.Tk):
     ttk.Button(btnf2, text='Toggle Item Enabled', command=self._toggle_item_enabled).pack(side='left', padx=5)
 
     def _generate_command(self):
-    """Generate a shop command dynamically from selected item & fields."""
-    # Find the ArkItem object for the entered name
+        """Generate a shop command dynamically from selected item & fields."""
+        # Find the ArkItem object for the entered name
         item_name = self.name_entry.get().strip()
         ark_item = self._find_ark_item(item_name)  # Implement this to search your library
 
