@@ -273,7 +273,7 @@ class WrecksShopLauncher(tk.Tk):
 
     # Shop Items Page
     def _build_shop_page(self):
-    f = self.pages['Shop Items']
+        f = self.pages['Shop Items']
 
     # ---------------- Category Section ----------------
     ttk.Label(f, text='Category').pack(anchor='w', pady=5)
