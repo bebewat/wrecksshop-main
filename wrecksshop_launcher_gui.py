@@ -134,6 +134,7 @@ class WrecksShopLauncher(tk.Tk):
         page_names = ['Configuration','RCON Servers','SQL Databases','Shop Items',
                       'Data Library','Admin Roles','Discounts','Control','Logs']
         for name in page_names:
+            f = frame
             frame = ttk.Frame(self.nb)
             self.nb.add(frame, text=name)
             self.pages[name] = frame
