@@ -1,3 +1,5 @@
+import tkinter as tk
+import json, os
 from typing import List
 from arklib_loader import ArkItem
 
@@ -19,17 +21,20 @@ def build_spawn_dino_command(eos_id: str, item: ArkItem,
 
 def build_single(item: ArkItem, **kwargs) -> List[str]:
     """Return list to keep interface consistent (breeding pairs may return >1)."""
-    if item.section.lower() == "creatures":
+    section = (item.section or "").lower()
+
+    if section == "creatures":
         cmd = build_spawn_dino_command(
-            eos_id=kwargs["eos_id"],
+            eos_id=kwargs.get("eos_id", ""),
             item=item,
             level=int(kwargs.get("level", 224)),
             breedable=bool(kwargs.get("breedable", True)),
         )
         return [cmd]
+
     else:
         cmd = build_giveitem_command(
-            player_id=int(kwargs["player_id"]),
+            player_id=int(kwargs.get("player_id", 1)),
             item=item,
             qty=int(kwargs.get("qty", 1)),
             quality=int(kwargs.get("quality", 1)),
