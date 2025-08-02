@@ -73,6 +73,13 @@ class WrecksShopLauncher(tk.Tk):
         # Load data
         self._load_env()
         self.library = update_base_library()
+        self.player_id_var = tk.IntVar(value=1)
+        self.eos_id_var = tk.StringVar()
+        self.qty_var = tk.IntVar(value=1)
+        self.quality_var = tk.IntVar(value=1)
+        self.is_blueprint_var = tk.BooleanVar(value=False)
+        self.level_var = tk.IntVar(value=224)
+        self.breedable_var = tk.BooleanVar(value=True)
         # Initial loads
         self._load_servers()
         self._load_databases()
@@ -266,33 +273,115 @@ class WrecksShopLauncher(tk.Tk):
 
     # Shop Items Page
     def _build_shop_page(self):
-        f = self.pages['Shop Items']
-        ttk.Label(f,text='Category').pack(anchor='w',pady=5)
-        self.cat_combo = ttk.Combobox(f, values=self.categories, state='readonly')
-        self.cat_combo.pack(fill='x', padx=5)
-        self.cat_combo.bind('<<ComboboxSelected>>', lambda e: self._refresh_shop_items())
-        btnf = ttk.Frame(f); btnf.pack(pady=5)
-        ttk.Button(btnf,text='Add Category',command=self._add_category).pack(side='left',padx=5)
-        ttk.Button(btnf,text='Toggle Category Enabled',command=self._toggle_category_enabled).pack(side='left',padx=5)
-        cols = ('Name','Command','Price','Limit','Roles','Enabled','Description')
-        self.item_tv = ttk.Treeview(f,columns=cols,show='headings')
-        for c in cols: self.item_tv.heading(c,text=c)
-        self.item_tv.pack(expand=True,fill='both',pady=5)
-        form = ttk.Frame(f); form.pack(fill='x',pady=5)
-        # inputs for Name, Command, Price, Roles, Limit, Description
-        labels = ['Name','Command','Price','Roles']
-        for i,l in enumerate(labels): ttk.Label(form,text=l).grid(row=0,column=i,padx=4)
-        ttk.Label(form,text='Description').grid(row=0,column=5,padx=4)
-        self.name_entry = ttk.Entry(form,width=18); self.name_entry.grid(row=1,column=0,padx=4)
-        self.command_entry = ttk.Entry(form,width=18); self.command_entry.grid(row=1,column=1,padx=4)
-        self.price_entry = ttk.Entry(form,width=8); self.price_entry.grid(row=1,column=2,padx=4)
-        self.roles_entry = ttk.Entry(form,width=12); self.roles_entry.grid(row=1,column=3,padx=4)
-        self.limit_var=tk.BooleanVar(); ttk.Checkbutton(form,text='Limit',variable=self.limit_var).grid(row=1,column=4,padx=4)
-        self.desc_entry = ttk.Entry(form,width=25); self.desc_entry.grid(row=1,column=5,padx=4)
-        btnf2 = ttk.Frame(f); btnf2.pack(pady=5)
-        ttk.Button(btnf2,text='Add Item',command=self._on_add_item).pack(side='left',padx=5)
-        ttk.Button(btnf2,text='Toggle Item Enabled',command=self._toggle_item_enabled).pack(side='left',padx=5)
+    f = self.pages['Shop Items']
 
+    # ---------------- Category Section ----------------
+    ttk.Label(f, text='Category').pack(anchor='w', pady=5)
+    self.cat_combo = ttk.Combobox(f, values=self.categories, state='readonly')
+    self.cat_combo.pack(fill='x', padx=5)
+    self.cat_combo.bind('<<ComboboxSelected>>', lambda e: self._refresh_shop_items())
+
+    btnf = ttk.Frame(f)
+    btnf.pack(pady=5)
+    ttk.Button(btnf, text='Add Category', command=self._add_category).pack(side='left', padx=5)
+    ttk.Button(btnf, text='Toggle Category Enabled', command=self._toggle_category_enabled).pack(side='left', padx=5)
+
+    # ---------------- Treeview of Shop Items ----------------
+    cols = ('Name', 'Command', 'Price', 'Limit', 'Roles', 'Enabled', 'Description')
+    self.item_tv = ttk.Treeview(f, columns=cols, show='headings')
+    for c in cols:
+        self.item_tv.heading(c, text=c)
+    self.item_tv.pack(expand=True, fill='both', pady=5)
+
+    # ---------------- Item Form Section ----------------
+    form = ttk.Frame(f)
+    form.pack(fill='x', pady=5)
+
+    # First row: Basic fields
+    labels = ['Name', 'Command', 'Price', 'Roles']
+    for i, l in enumerate(labels):
+        ttk.Label(form, text=l).grid(row=0, column=i, padx=4)
+    ttk.Label(form, text='Description').grid(row=0, column=5, padx=4)
+
+    self.name_entry = ttk.Entry(form, width=18)
+    self.name_entry.grid(row=1, column=0, padx=4)
+
+    self.command_entry = ttk.Entry(form, width=18)
+    self.command_entry.grid(row=1, column=1, padx=4)
+
+    self.price_entry = ttk.Entry(form, width=8)
+    self.price_entry.grid(row=1, column=2, padx=4)
+
+    self.roles_entry = ttk.Entry(form, width=12)
+    self.roles_entry.grid(row=1, column=3, padx=4)
+
+    self.limit_var = tk.BooleanVar()
+    ttk.Checkbutton(form, text='Limit', variable=self.limit_var).grid(row=1, column=4, padx=4)
+
+    self.desc_entry = ttk.Entry(form, width=25)
+    self.desc_entry.grid(row=1, column=5, padx=4)
+
+    # ---------------- Command Builder Extra Fields ----------------
+    # Quantity
+    ttk.Label(form, text='Qty').grid(row=2, column=0, padx=4)
+    self.qty_var = tk.IntVar(value=1)
+    ttk.Entry(form, textvariable=self.qty_var, width=6).grid(row=3, column=0, padx=4)
+
+    # Quality
+    ttk.Label(form, text='Quality').grid(row=2, column=1, padx=4)
+    self.quality_var = tk.IntVar(value=1)
+    ttk.Entry(form, textvariable=self.quality_var, width=6).grid(row=3, column=1, padx=4)
+
+    # Is Blueprint Checkbox
+    self.is_bp_var = tk.BooleanVar(value=False)
+    ttk.Checkbutton(form, text='Is BP', variable=self.is_bp_var).grid(row=3, column=2, padx=4)
+
+    # Level for Dinos
+    ttk.Label(form, text='Level').grid(row=2, column=3, padx=4)
+    self.level_var = tk.IntVar(value=224)
+    ttk.Entry(form, textvariable=self.level_var, width=6).grid(row=3, column=3, padx=4)
+
+    # Breedable Checkbox for Dinos
+    self.breedable_var = tk.BooleanVar(value=True)
+    ttk.Checkbutton(form, text='Breedable', variable=self.breedable_var).grid(row=3, column=4, padx=4)
+
+    # Generate Command Button
+    ttk.Button(form, text='Generate Command', command=self._generate_command).grid(row=3, column=5, padx=4)
+
+    # ---------------- Item Buttons ----------------
+    btnf2 = ttk.Frame(f)
+    btnf2.pack(pady=5)
+    ttk.Button(btnf2, text='Add Item', command=self._on_add_item).pack(side='left', padx=5)
+    ttk.Button(btnf2, text='Toggle Item Enabled', command=self._toggle_item_enabled).pack(side='left', padx=5)
+
+    def _generate_command(self):
+    """Generate a shop command dynamically from selected item & fields."""
+    # Find the ArkItem object for the entered name
+        item_name = self.name_entry.get().strip()
+        ark_item = self._find_ark_item(item_name)  # Implement this to search your library
+
+        if not ark_item:
+            self.command_entry.delete(0, tk.END)
+            self.command_entry.insert(0, "No Item Selected")
+            return
+
+    # Build command using your existing builder
+        cmd_list = build_single(
+            item=ark_item,
+            qty=self.qty_var.get(),
+            quality=self.quality_var.get(),
+            is_bp=self.is_bp_var.get(),
+            player_id=1,          # Replace with your Player ID logic if needed
+            eos_id="",            # Optional for creature spawns
+            level=self.level_var.get(),
+            breedable=self.breedable_var.get()
+        )
+
+    # Display command in GUI
+        self.command_entry.delete(0, tk.END)
+        self.command_entry.insert(0, cmd_list[0])
+
+    
     def _refresh_shop_items(self):
         self.item_tv.delete(*self.item_tv.get_children())
         if os.path.exists(SHOP_ITEMS_PATH):
