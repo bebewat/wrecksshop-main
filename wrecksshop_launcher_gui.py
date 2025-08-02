@@ -273,8 +273,8 @@ class WrecksShopLauncher(tk.Tk):
 
     # Shop Items Page
     def _build_shop_page(self):
-        f = self.pages['Shop Items']
-
+        f = ttk.Frame(parent)
+        f.pack(fill='both', expand=True)
     # ---------------- Category Section ----------------
     ttk.Label(f, text='Category').pack(anchor='w', pady=5)
     self.cat_combo = ttk.Combobox(f, values=self.categories, state='readonly')
