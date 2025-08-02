@@ -66,6 +66,7 @@ class WrecksShopLauncher(tk.Tk):
             pass
         # Load assets
         self._load_assets()
+        self.config_data = self.load_config()
         # Build UI
         self._build_main_menu()
         self._build_notebook()
@@ -88,6 +89,13 @@ class WrecksShopLauncher(tk.Tk):
             self.logo_img = ImageTk.PhotoImage(img)
         else:
             self.logo_img = None
+
+    def load_config(self):
+        try:
+            with open(config_path, "r") as f:
+                return json.load(f)
+        except FileNotFoundError:
+            return {}
 
     def _build_main_menu(self):
         c = Canvas(self, highlightthickness=0)
