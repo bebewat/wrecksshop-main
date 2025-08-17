@@ -1,0 +1,77 @@
+{
+  "discord_bot_token": "",
+  "discord_shop_channel_id": "",
+  "discord_log_channel_id": "",
+  "tip4serv_secret": "",
+  "tip4serv_token": "",
+  "reward_interval": 60,
+  "reward_amount": 10,
+  "player_tiers": {
+    "default": {
+      "multiplier": 1.0,
+      "requirements": "None"
+    },
+    "donor": {
+      "multiplier": 1.5,
+      "requirements": "Donation"
+    },
+    "vip": {
+      "multiplier": 2.0,
+      "requirements": "VIP Status"
+    },
+    "admin": {
+      "multiplier": 3.0,
+      "requirements": "Admin Role"
+    }
+  },
+  "rcon_servers": [],
+  "databases": [
+    {
+      "name": "Default SQLite",
+      "type": "sqlite",
+      "path": "data/bot_database.db",
+      "host": "localhost",
+      "port": "",
+      "database": "bot_database.db"
+    }
+  ],
+  "admin_roles": [
+    {
+      "name": "Owner",
+      "discord_role_id": "",
+      "permissions": ["*"],
+      "point_multiplier": 5.0,
+      "enabled": true
+    },
+    {
+      "name": "Admin",
+      "discord_role_id": "",
+      "permissions": ["shop.manage", "users.manage", "points.give"],
+      "point_multiplier": 3.0,
+      "enabled": true
+    },
+    {
+      "name": "Moderator",
+      "discord_role_id": "",
+      "permissions": ["shop.view", "users.view"],
+      "point_multiplier": 2.0,
+      "enabled": true
+    }
+  ],
+  "logging": {
+    "level": "INFO",
+    "file": "logs/bot.log",
+    "max_file_size": 10485760,
+    "backup_count": 5
+  },
+  "shop": {
+    "currency_name": "points",
+    "default_category": "General",
+    "max_items_per_page": 10
+  },
+  "security": {
+    "command_cooldown": 3,
+    "max_transfer_amount": 10000,
+    "require_steam_linking": true
+  }
+}
