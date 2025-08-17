@@ -6,7 +6,12 @@ import tkinter as tk
 from tkinter import Canvas, filedialog, messagebox, simpledialog, ttk
 from tkinter.scrolledtext import ScrolledText
 from pathlib import Path
-from PIL import Image, ImageTk
+try:
+    from PIL import Image, ImageTk
+except ImportError:
+    print("Warning: PIL/Pillow not found. Image features will be disabled.")
+    Image = None
+    ImageTk = None
 from arklib_loader import load_ark_lib, ArkItem
 from arkdata_updater import update_base_library, update_full_library
 import command_builders
@@ -93,9 +98,13 @@ class WrecksShopLauncher(tk.Tk):
         self.process = None
 
     def _load_assets(self):
-        if os.path.exists(LOGO_PATH):
-            img = Image.open(LOGO_PATH).resize((64,64), Image.ANTIALIAS)
-            self.logo_img = ImageTk.PhotoImage(img)
+        if Image and ImageTk and os.path.exists(LOGO_PATH):
+            try:
+                img = Image.open(LOGO_PATH).resize((64,64), Image.Resampling.LANCZOS)
+                self.logo_img = ImageTk.PhotoImage(img)
+            except Exception as e:
+                print(f"Warning: Could not load logo image: {e}")
+                self.logo_img = None
         else:
             self.logo_img = None
 
@@ -139,7 +148,6 @@ class WrecksShopLauncher(tk.Tk):
         page_names = ['Configuration','RCON Servers','SQL Databases','Shop Items',
                       'Data Library','Admin Roles','Discounts','Control','Logs']
         for name in page_names:
-            f = frame
             frame = ttk.Frame(self.nb)
             self.nb.add(frame, text=name)
             self.pages[name] = frame
@@ -278,117 +286,121 @@ class WrecksShopLauncher(tk.Tk):
             self._log(f"Removed database {name}")
 
     # Shop Items Page
-def _build_shop_page(self):
-    # Create a new tab for Shop Items in the notebook
-    f = ttk.Frame(self.notebook)
-    self.notebook.add(f, text='Shop Items')
+    def _build_shop_page(self):
+        # Use the existing pages framework
+        f = self.pages['Shop Items']
 
-    # ---------------- Category Section ----------------
-    ttk.Label(f, text='Category').pack(anchor='w', pady=5)
-    self.cat_combo = ttk.Combobox(f, values=self.categories, state='readonly')
-    self.cat_combo.pack(fill='x', padx=5)
-    self.cat_combo.bind('<<ComboboxSelected>>', lambda e: self._refresh_shop_items())
+        # ---------------- Category Section ----------------
+        ttk.Label(f, text='Category').pack(anchor='w', pady=5)
+        self.cat_combo = ttk.Combobox(f, values=self.categories, state='readonly')
+        self.cat_combo.pack(fill='x', padx=5)
+        self.cat_combo.bind('<<ComboboxSelected>>', lambda e: self._refresh_shop_items())
 
-    btnf = ttk.Frame(f)
-    btnf.pack(pady=5)
-    ttk.Button(btnf, text='Add Category', command=self._add_category).pack(side='left', padx=5)
-    ttk.Button(btnf, text='Toggle Category Enabled', command=self._toggle_category_enabled).pack(side='left', padx=5)
+        btnf = ttk.Frame(f)
+        btnf.pack(pady=5)
+        ttk.Button(btnf, text='Add Category', command=self._add_category).pack(side='left', padx=5)
+        ttk.Button(btnf, text='Toggle Category Enabled', command=self._toggle_category_enabled).pack(side='left', padx=5)
 
-    # ---------------- Treeview of Shop Items ----------------
-    cols = ('Name', 'Command', 'Price', 'Limit', 'Roles', 'Enabled', 'Description')
-    self.item_tv = ttk.Treeview(f, columns=cols, show='headings')
-    for c in cols:
-        self.item_tv.heading(c, text=c)
-    self.item_tv.pack(expand=True, fill='both', pady=5)
+        # ---------------- Treeview of Shop Items ----------------
+        cols = ('Name', 'Command', 'Price', 'Limit', 'Roles', 'Enabled', 'Description')
+        self.item_tv = ttk.Treeview(f, columns=cols, show='headings')
+        for c in cols:
+            self.item_tv.heading(c, text=c)
+        self.item_tv.pack(expand=True, fill='both', pady=5)
 
-    # ---------------- Item Form Section ----------------
-    form = ttk.Frame(f)
-    form.pack(fill='x', pady=5)
+        # ---------------- Item Form Section ----------------
+        form = ttk.Frame(f)
+        form.pack(fill='x', pady=5)
 
-    # First row: Basic fields
-    labels = ['Name', 'Command', 'Price', 'Roles']
-    for i, l in enumerate(labels):
-        ttk.Label(form, text=l).grid(row=0, column=i, padx=4)
-    ttk.Label(form, text='Description').grid(row=0, column=5, padx=4)
+        # First row: Basic fields
+        labels = ['Name', 'Command', 'Price', 'Roles']
+        for i, l in enumerate(labels):
+            ttk.Label(form, text=l).grid(row=0, column=i, padx=4)
+        ttk.Label(form, text='Description').grid(row=0, column=5, padx=4)
 
-    self.name_entry = ttk.Entry(form, width=18)
-    self.name_entry.grid(row=1, column=0, padx=4)
+        self.name_entry = ttk.Entry(form, width=18)
+        self.name_entry.grid(row=1, column=0, padx=4)
 
-    self.command_entry = ttk.Entry(form, width=18)
-    self.command_entry.grid(row=1, column=1, padx=4)
+        self.command_entry = ttk.Entry(form, width=18)
+        self.command_entry.grid(row=1, column=1, padx=4)
 
-    self.price_entry = ttk.Entry(form, width=8)
-    self.price_entry.grid(row=1, column=2, padx=4)
+        self.price_entry = ttk.Entry(form, width=8)
+        self.price_entry.grid(row=1, column=2, padx=4)
 
-    self.roles_entry = ttk.Entry(form, width=12)
-    self.roles_entry.grid(row=1, column=3, padx=4)
+        self.roles_entry = ttk.Entry(form, width=12)
+        self.roles_entry.grid(row=1, column=3, padx=4)
 
-    self.limit_var = tk.BooleanVar()
-    ttk.Checkbutton(form, text='Limit', variable=self.limit_var).grid(row=1, column=4, padx=4)
+        self.limit_var = tk.BooleanVar()
+        ttk.Checkbutton(form, text='Limit', variable=self.limit_var).grid(row=1, column=4, padx=4)
 
-    self.desc_entry = ttk.Entry(form, width=25)
-    self.desc_entry.grid(row=1, column=5, padx=4)
+        self.desc_entry = ttk.Entry(form, width=25)
+        self.desc_entry.grid(row=1, column=5, padx=4)
 
-    # ---------------- Command Builder Extra Fields ----------------
-    # Quantity
-    ttk.Label(form, text='Qty').grid(row=2, column=0, padx=4)
-    self.qty_var = tk.IntVar(value=1)
-    ttk.Entry(form, textvariable=self.qty_var, width=6).grid(row=3, column=0, padx=4)
+        # ---------------- Command Builder Extra Fields ----------------
+        # Quantity
+        ttk.Label(form, text='Qty').grid(row=2, column=0, padx=4)
+        self.qty_var = tk.IntVar(value=1)
+        ttk.Entry(form, textvariable=self.qty_var, width=6).grid(row=3, column=0, padx=4)
 
-    # Quality
-    ttk.Label(form, text='Quality').grid(row=2, column=1, padx=4)
-    self.quality_var = tk.IntVar(value=1)
-    ttk.Entry(form, textvariable=self.quality_var, width=6).grid(row=3, column=1, padx=4)
+        # Quality
+        ttk.Label(form, text='Quality').grid(row=2, column=1, padx=4)
+        self.quality_var = tk.IntVar(value=1)
+        ttk.Entry(form, textvariable=self.quality_var, width=6).grid(row=3, column=1, padx=4)
 
-    # Is Blueprint Checkbox
-    self.is_bp_var = tk.BooleanVar(value=False)
-    ttk.Checkbutton(form, text='Is BP', variable=self.is_bp_var).grid(row=3, column=2, padx=4)
+        # Is Blueprint Checkbox
+        self.is_bp_var = tk.BooleanVar(value=False)
+        ttk.Checkbutton(form, text='Is BP', variable=self.is_bp_var).grid(row=3, column=2, padx=4)
 
-    # Level for Dinos
-    ttk.Label(form, text='Level').grid(row=2, column=3, padx=4)
-    self.level_var = tk.IntVar(value=224)
-    ttk.Entry(form, textvariable=self.level_var, width=6).grid(row=3, column=3, padx=4)
+        # Level for Dinos
+        ttk.Label(form, text='Level').grid(row=2, column=3, padx=4)
+        self.level_var = tk.IntVar(value=224)
+        ttk.Entry(form, textvariable=self.level_var, width=6).grid(row=3, column=3, padx=4)
 
-    # Breedable Checkbox for Dinos
-    self.breedable_var = tk.BooleanVar(value=True)
-    ttk.Checkbutton(form, text='Breedable', variable=self.breedable_var).grid(row=3, column=4, padx=4)
+        # Breedable Checkbox for Dinos
+        self.breedable_var = tk.BooleanVar(value=True)
+        ttk.Checkbutton(form, text='Breedable', variable=self.breedable_var).grid(row=3, column=4, padx=4)
 
-    # Generate Command Button
-    ttk.Button(form, text='Generate Command', command=self._generate_command).grid(row=3, column=5, padx=4)
+        # Generate Command Button
+        ttk.Button(form, text='Generate Command', command=self._generate_command).grid(row=3, column=5, padx=4)
 
-    # ---------------- Item Buttons ----------------
-    btnf2 = ttk.Frame(f)
-    btnf2.pack(pady=5)
-    ttk.Button(btnf2, text='Add Item', command=self._on_add_item).pack(side='left', padx=5)
-    ttk.Button(btnf2, text='Toggle Item Enabled', command=self._toggle_item_enabled).pack(side='left', padx=5)
+        # ---------------- Item Buttons ----------------
+        btnf2 = ttk.Frame(f)
+        btnf2.pack(pady=5)
+        ttk.Button(btnf2, text='Add Item', command=self._on_add_item).pack(side='left', padx=5)
+        ttk.Button(btnf2, text='Toggle Item Enabled', command=self._toggle_item_enabled).pack(side='left', padx=5)
 
 
     def _generate_command(self):
         """Generate a shop command dynamically from selected item & fields."""
         # Find the ArkItem object for the entered name
         item_name = self.name_entry.get().strip()
-        ark_item = self._find_ark_item(item_name)  # Implement this to search your library
+        ark_item = self._find_ark_item(item_name)
 
         if not ark_item:
             self.command_entry.delete(0, tk.END)
             self.command_entry.insert(0, "No Item Selected")
             return
 
-    # Build command using your existing builder
-        cmd_list = build_single(
-            item=ark_item,
-            qty=self.qty_var.get(),
-            quality=self.quality_var.get(),
-            is_bp=self.is_bp_var.get(),
-            player_id=1,          # Replace with your Player ID logic if needed
-            eos_id="",            # Optional for creature spawns
-            level=self.level_var.get(),
-            breedable=self.breedable_var.get()
-        )
+        # Build command using command_builders module
+        if ark_item.section.lower().startswith('dino'):
+            cmd = command_builders.build_spawn_dino_command(
+                eos_id='{eos}',
+                item=ark_item,
+                level=self.level_var.get(),
+                breedable=self.breedable_var.get()
+            )
+        else:
+            cmd = command_builders.build_giveitem_command(
+                player_id='{player}',
+                item=ark_item,
+                qty=self.qty_var.get(),
+                quality=self.quality_var.get(),
+                is_bp=self.is_bp_var.get()
+            )
 
-    # Display command in GUI
+        # Display command in GUI
         self.command_entry.delete(0, tk.END)
-        self.command_entry.insert(0, cmd_list[0])
+        self.command_entry.insert(0, cmd)
 
     
     def _refresh_shop_items(self):
@@ -492,13 +504,26 @@ def _build_shop_page(self):
             mod = getattr(entry, 'mod', '') or entry.get('mod','')
             self.lib_tv.insert('', 'end', values=(name, bp, mod))
 
+    def _find_ark_item(self, item_name):
+        """Search for an ArkItem by name in the loaded library."""
+        for section_name, items in self.library.items():
+            if isinstance(items, dict):
+                for name, item in items.items():
+                    if name.lower() == item_name.lower():
+                        return item
+            else:
+                for item in items:
+                    if item.name.lower() == item_name.lower():
+                        return item
+        return None
+
     def _on_lib_import(self):
         sel=self.lib_tv.selection();
         if not sel: return
         name,bp,mod=self.lib_tv.item(sel,'values')
         self.name_entry.delete(0,'end'); self.name_entry.insert(0,name)
-        try: ark_item=ArkItem(sec=self.lib_type_var.get(),name=name,blueprint=bp,mod=mod)
-        except: ark_item=ArkItem(sec='',name=name,blueprint=bp,mod=mod)
+        try: ark_item=ArkItem(section=self.lib_type_var.get(),name=name,blueprint=bp,mod=mod)
+        except: ark_item=ArkItem(section='',name=name,blueprint=bp,mod=mod)
         if self.lib_type_var.get().lower().startswith('dino'):
             cmd=command_builders.build_spawn_dino_command(eos_id='{eos}',item=ark_item,level=1,breedable=False)
         else:
