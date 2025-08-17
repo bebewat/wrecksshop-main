@@ -1,0 +1,41 @@
+modules = ["python-3.11"]
+[agent]
+expertMode = true
+
+[nix]
+channel = "stable-25_05"
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Ark Discord Bot Manager"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "desktop_app"
+
+[[workflows.workflow]]
+name = "Ark Discord Bot Manager"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "pip install discord.py aiosqlite psutil requests && python main.py"
+
+[workflows.workflow.metadata]
+outputType = "vnc"
+
+[[workflows.workflow]]
+name = "desktop_app"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd /home/user && pip install discord.py aiosqlite psutil && python main.py"
