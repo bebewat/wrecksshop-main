@@ -5,4 +5,5 @@ python-dotenv==1.0.1
 requests==2.32.4
 pandas>=2.2.3,<3
 pillows>=11.0.0,<12
+asyncpg==0.29.0
 
