@@ -6,6 +6,11 @@ from PyInstaller.building.build_main import Analysis, PYZ, EXE, COLLECT
 from PyInstaller.utils.hooks import collect_submodules
 import PyInstaller
 import sys
+binaries = []
+datas = []
+
+if sys.platform == "win32":
+  binaries += [("python313.ll", ".")]
 
 python_dll = os.path.join(os.path.dirname(sys.executable), f'python{sys.version_info.major}{sys.version_info.minor}.dll')
 
