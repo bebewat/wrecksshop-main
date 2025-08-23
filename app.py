@@ -6,6 +6,9 @@ import uvicorn
 import discord
 from discord import app_commands
 from discord.ext import commands
+from db import get_pool, init_db
+from seed_loader import seed_from_json, seed_from_csv
+from shop_ui import ShopAddView, is_shop_admin
 
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
 logging.basicConfig(level=LOG_LEVEL)
@@ -60,6 +63,26 @@ async def thankyou_cmd(
     )
     return
   await interaction.response.send_message("Delivered!", ephemeral=True)
+
+class ShopCog(commands.Cog):
+  def __init__(self, bot: commands.Bot, pool):
+    self.bot = bot
+    self.pool = pool
+  @app_commands.command(name="shop-add", description="Add a shop item")
+  @is_shop_admin()
+  async def shop_add(self, interaction: discord.Interaction):
+    view = ShopAddView(self.pool)
+    await view.start(interaction)
+
+@app_commands.command(name="shop-remove", description="Remove a shop item by name")
+@app_commands.describe(name="Item name to remove")
+@is_shop_admin()
+async def shop_remove(self, interaction: discord.Interaction, name: str):
+  async with self.pool.acquire() as con:
+    row = await con.fetchrow("Delete from shop_item where name=$1 returning name", name)
+    if row: await interaction.response.send_message(f" Removed **{row['name']}**.", ephemeral=True)
+
+@app_commands.command(name="shop-sync-seed", description="Import categories from CSV/JSON")
 
 @bot.event
 async def on_ready():
