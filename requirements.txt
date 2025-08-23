@@ -9,4 +9,3 @@ yarg==0.1.10
 pillow==9.5.0
 discord.py==2.3.2
 pandas==2.1.2
-pyinstaller==5.8.0
