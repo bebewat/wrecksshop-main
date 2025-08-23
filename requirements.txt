@@ -1,13 +1,8 @@
-﻿certifi==2025.7.14
-charset-normalizer==3.4.2
-docopt==0.6.2
-idna==3.10
-pipreqs==0.4.13
+discord.py==2.4.0
+fastapi==0.112.2
+uvicorn==0.30.6
+python-dotenv==1.0.1
 requests==2.32.4
-urllib3==2.5.0
-yarg==0.1.10
-pillow>=11.0.0,<12
-discord.py==2.3.2
 pandas>=2.2.3,<3
-pyinstaller==6.15.0
+pillows>=11.0.0,<12
 
